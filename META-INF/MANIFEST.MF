@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Require-Bundle: com.dynatrace.diagnostics.sdk
+Bundle-Vendor: Compuware
+Bundle-ClassPath: .,lib/jsch-0.1.50.jar
+Bundle-Version: 1.0.2
+Bundle-Name: RunQueueMonitor
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: com.compuware.plugins.runqueuemonitor;singleton:=
+ true
+

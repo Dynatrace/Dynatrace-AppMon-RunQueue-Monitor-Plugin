@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<!-- plugin.xml file written by dynaTrace Client 5.6.0 -->
+<plugin>
+  <extension point="com.dynatrace.diagnostics.pdk.pluginconfig" id="com.compuware.plugins.runqueuemonitor" name="RunQueueMonitor">
+    <information>
+      <category value="" />
+      <displayname value="Run Queue Monitor" />
+      <description value="Gets the size of the run queue from the specified host using the vmstat command" />
+      <supportlevel value="unsupported" />
+    </information>
+    <configuration>
+      <property key="host" label="Host" type="string" description="My property description ..." default="localhost" multiline="false" />
+      <property key="username" label="Username" type="string" description="My property description ..." default="" multiline="false" />
+      <property key="password" label="Password" type="password" description="My property description ..." default="" />
+    </configuration>
+  </extension>
+  <extension point="com.dynatrace.diagnostics.pdk.monitor" id="com.compuware.plugins.runqueuemonitor.monitor" name="Run Queue Monitor">
+    <plugin configid="com.compuware.plugins.runqueuemonitor" class="com.compuware.plugin.RunQueueMonitor" />
+  </extension>
+  <extension point="com.dynatrace.diagnostics.pdk.monitormetricgroup" id="com.compuware.plugins.runqueuemonitor.monitor.metricgroup1" name="RunQueueMonitorMetric">
+    <metricgroup monitorid="com.compuware.plugins.runqueuemonitor.monitor">
+      <metric defaultrate="purepath" name="QueueSize" unit="number" description="Size of the runqueue" />
+    </metricgroup>
+  </extension>
+</plugin>
+
