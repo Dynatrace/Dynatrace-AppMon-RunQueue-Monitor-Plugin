@@ -21,9 +21,7 @@ public class RunQueueMonitor implements Monitor {
     private static final String CONFIG_USERNAME = "username";
 	private static final String CONFIG_PASSWORD = "password";
 	private static final String CONFIG_HOST     = "host";
-	private static final String COMMAND         = "vmstat";
-	private static final int    START_INDEX     = 163;
-	private static final int    STOP_INDEX      = 165;
+	private static final String COMMAND         = "vmstat|tail -1|cut -d' ' -f2";
 	private static final Logger log = Logger.getLogger(RunQueueMonitor.class.getName());
     
 	private String username;
@@ -48,11 +46,11 @@ public class RunQueueMonitor implements Monitor {
 		Status status = new Status();
 		try {
 			response = executeCommand();
+			log.log(Level.FINE, "Response from execution: " + response);
 			if (response != null) {
-		   		runQueueSize = parseResponse(response);
+		   		runQueueSize = Integer.parseInt(response.trim());
 		   		populateMeasure(runQueueSize, env);
 		    	status.setStatusCode(Status.StatusCode.Success);
-		    	log.log(Level.WARNING, "Got here" + response + ":::" + runQueueSize + ":");
 			} else {
 		   		status.setStatusCode(Status.StatusCode.ErrorTargetService);
 		   		status.setMessage("Response string was null. Aborting.");
@@ -87,6 +85,7 @@ public class RunQueueMonitor implements Monitor {
         username = env.getConfigString(CONFIG_USERNAME);
         password = env.getConfigPassword(CONFIG_PASSWORD);
         hostname = env.getConfigString(CONFIG_HOST);
+        log.log(Level.FINE, "Connecting to " + hostname + " using username " + username + ".");
     }
     
     private String executeCommand() throws Exception {
@@ -99,6 +98,7 @@ public class RunQueueMonitor implements Monitor {
         session.setConfig("StrictHostKeyChecking", "no");
         session.connect(30000); // Connect using timeout
         Channel channel=session.openChannel("exec");
+        log.log(Level.FINE, "Executing using command: " + COMMAND);
         ((ChannelExec)channel).setCommand(COMMAND);
         channel.setInputStream(null);
   		((ChannelExec)channel).setErrStream(System.err);
@@ -122,10 +122,6 @@ public class RunQueueMonitor implements Monitor {
     	return output;
     }
     
-    private Integer parseResponse(String response) {
-        String temp = response.substring(START_INDEX,STOP_INDEX);
-        return new Integer(temp.trim());
-    }
     
     private void populateMeasure(Integer queueSize, MonitorEnvironment env) {
     	Collection<MonitorMeasure> measures;
